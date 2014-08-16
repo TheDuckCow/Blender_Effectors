@@ -26,7 +26,15 @@ plans:
 - Name the constraints consistent to effector name, e.g. effector.L.001 for easy removal
 - add falloff types (and update-able in driver setting)
 - custome driver equation field ('advanced' tweaking, changes drivers for all in that effector group)
-
+- Empty vertex objects for location which AREN'T transformed, so that there is no limit to
+how much the location can do (now limited to be between object and base bone)
+- create list panel that shows effectors added, and with each selected can do things:
+	- all more effector objects
+	- select current objects (and rig)
+	- change falloff/equation
+	- remove selected from effector
+	- remove effector (drivers & rig)
+	- apply effector in position (removes rig)
 
 Source code available on github:
 https://github.com/TheDuckCow/
@@ -39,7 +47,7 @@ https://github.com/TheDuckCow/
 bl_info = {
 	"name": "Effector Motion",
 	"author": "Patrick W. Crawford",
-	"version": (0, 5, 0),
+	"version": (0, 5, 2),
 	"blender": (2, 71, 0),
 	"location": "3D window toolshelf",
 	"category": "Object",

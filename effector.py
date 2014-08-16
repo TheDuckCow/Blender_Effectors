@@ -37,7 +37,7 @@ how much the location can do (now limited to be between object and base bone)
 	- apply effector in position (removes rig)
 
 Source code available on github:
-https://github.com/TheDuckCow/
+https://github.com/TheDuckCow/Blender_Effectors
 
 """
 
@@ -47,12 +47,12 @@ https://github.com/TheDuckCow/
 bl_info = {
 	"name": "Effector Motion",
 	"author": "Patrick W. Crawford",
-	"version": (0, 5, 2),
+	"version": (1, 0, 2),
 	"blender": (2, 71, 0),
 	"location": "3D window toolshelf",
 	"category": "Object",
 	"description": "Effector special motion graphics",
-	"wiki_url": "https://github.com/TheDuckCow"
+	"wiki_url": "https://github.com/TheDuckCow/Blender_Effectors"
 	}
 
 

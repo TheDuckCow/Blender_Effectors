@@ -21,6 +21,13 @@ time effector (..?) etc. Research it more.
 another scripting ref:
 http://wiki.blender.org/index.php/Dev:2.5/Py/Scripts/Cookbook/Code_snippets/Interface#A_popup_dialog
 
+plans:
+- Make checkboxes for fields to have effector affect (loc, rot, scale)
+- Name the constraints consistent to effector name, e.g. effector.L.001 for easy removal
+- add falloff types (and update-able in driver setting)
+- custome driver equation field ('advanced' tweaking, changes drivers for all in that effector group)
+
+
 Source code available on github:
 https://github.com/TheDuckCow/
 
@@ -62,38 +69,94 @@ def createEffectorRig(bones,loc=None):
 	rig.one = 0.6
 	#bpy.ops.wm.properties_add(data_path="object")
 	
-	bpy.ops.object.editmode_toggle()
-	bpy.ops.armature.bone_primitive_add() #control
-		#>> should just be the scale!!
-		# or.. if we wanted oblong/off axis control for falloff
-		# then we could use projections to this object..
-		# but naah.
-		
-		# so remove the distance control/ make the scale of base
-		# the falloff control and then LATER make the property
-		# ALSO (or instead?) affect it
-	bpy.ops.object.editmode_toggle()
+	"""
+	bpy.ops.object.mode_set(mode='EDIT')
+	control = rig.data.edit_bones.new('control')
+	#bpy.ops.armature.bone_primitive_add() #control
+	# eventually add property as additional factor
 
 	rig.data.bones[0].name = 'base'
 	rig.data.bones[0].show_wire = True
-	rig.pose.bones[0].custom_shape = bone_base
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.mode_set(mode='EDIT')
+	
+	# SCENE REFRESH OR SOMETHING???
 	rig.data.bones[1].name = 'control'
+	control = obj.pose.bones[bones['base']]
+	#rig.data.bones[1].parent = rig.data.[bones['base']] #need other path to bone data
+	bpy.ops.object.mode_set(mode='OBJECT')
+	rig.pose.bones[0].custom_shape = bone_base
 	rig.pose.bones[1].custom_shape = bone_control
-	
-	#bpy.ops.object.editmode_toggle()
-	#rig.data.bones['control']
-	#bpy.ops.object.editmode_toggle()
-	
-	#make the parent of the dist ref to the other object
-	# move the third bone up slightly then, then parent
-	#bpy.ops.armature.parent_set(type='OFFSET')
+
 	# turn of inherent rotation for control??
 	
 	# property setup
-	#bpy.ops.wm.properties_edit(data_path="object", property="Effector Scale",
-	#	value="1.0", min=0, max=100, description="Falloff scale of effector")
-	#scene property="Effector.001"
+	#bpy.ops.wm.properties_edit(data_path='object', property='Effector Scale',
+	#	value='1.0', min=0, max=100, description='Falloff scale of effector')
+	#scene property='Effector.001'
 	
+	
+	
+	"""
+	
+	bpy.ops.object.mode_set(mode='EDIT')
+	bpy.ops.armature.select_all(action='SELECT')
+	bpy.ops.armature.delete()
+	
+	arm = rig.data
+	bones = {}
+
+	bone = arm.edit_bones.new('base')
+	bone.head[:] = 0.0000, 0.0000, 0.0000
+	bone.tail[:] = 0.0000, 0.0000, 1.0000
+	bone.roll = 0.0000
+	bone.use_connect = False
+	bone.show_wire = True
+	bones['base'] = bone.name
+	
+	bone = arm.edit_bones.new('control')
+	bone.head[:] = 0.0000, 0.0000, 0.0000
+	bone.tail[:] = 0.0000, 0.0000, 1.0000
+	bone.roll = 0.0000
+	bone.use_connect = False
+	bone.parent = arm.edit_bones[bones['base']]
+	bones['control'] = bone.name
+
+	bpy.ops.object.mode_set(mode='OBJECT')
+	pbone = rig.pose.bones[bones['base']]
+	pbone.rigify_type = ''
+	pbone.lock_location = (False, False, False)
+	pbone.lock_rotation = (False, False, False)
+	pbone.lock_rotation_w = False
+	pbone.lock_scale = (False, False, False)
+	pbone.rotation_mode = 'QUATERNION'
+	pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+	pbone = rig.pose.bones[bones['control']]
+	pbone.rigify_type = ''
+	pbone.lock_location = (False, False, False)
+	pbone.lock_rotation = (False, False, False)
+	pbone.lock_rotation_w = False
+	pbone.lock_scale = (False, False, False)
+	pbone.rotation_mode = 'QUATERNION'
+	pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+
+	bpy.ops.object.mode_set(mode='EDIT')
+	for bone in arm.edit_bones:
+		bone.select = False
+		bone.select_head = False
+		bone.select_tail = False
+	for b in bones:
+		bone = arm.edit_bones[bones[b]]
+		bone.select = True
+		bone.select_head = True
+		bone.select_tail = True
+		arm.edit_bones.active = bone
+
+	arm.layers = [(x in [0]) for x in range(32)]
+	
+	bpy.ops.object.mode_set(mode='OBJECT')
+	rig.pose.bones[0].custom_shape = bone_base
+	rig.pose.bones[1].custom_shape = bone_control
 	
 	return rig
 
@@ -108,6 +171,9 @@ def createBoneShapes():
 	bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, enter_editmode=False, size=0.5)
 	effectorBone2 = bpy.context.active_object
 	effectorBone2.name = "effectorBone2"
+	
+	#move to different layer, too
+	#[False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True]
 	
 	effectorBone1.hide = True
 	effectorBone2.hide = True
@@ -267,9 +333,20 @@ class separateFaces(bpy.types.Operator):
 		
 		for obj in bpy.context.selected_objects:
 			bpy.context.scene.objects.active = obj
+			#mark all edges sharp
+			bpy.ops.object.editmode_toggle()
+			bpy.ops.mesh.select_all(action='SELECT')
+			bpy.ops.mesh.mark_sharp()
+			bpy.ops.object.editmode_toggle()
+			#apply modifier to split faces
 			bpy.ops.object.modifier_add(type='EDGE_SPLIT')
 			obj.modifiers[-1].split_angle = 0
 			bpy.ops.object.modifier_apply(apply_as='DATA', modifier=obj.modifiers[-1].name)
+			#clear sharp
+			bpy.ops.object.editmode_toggle()
+			bpy.ops.mesh.mark_sharp(clear=True)
+			bpy.ops.object.editmode_toggle()
+			#separate to meshes
 			bpy.ops.mesh.separate(type="LOOSE")
 		bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
 		
@@ -284,19 +361,25 @@ class effectorPanel(bpy.types.Panel):
 
 	def draw(self, context):
 		
+		view = context.space_data
+		scene = context.scene
 		layout = self.layout
 
 		split = layout.split()
 		col = split.column(align=True)
 		col.operator("object.separate_faces", text="Separate Faces")
-		split = layout.split()
-		col = split.column(align=True)
+		split = layout.split()			# uncomment to make vertical
+		#col = split.column(align=True) # uncomment to make horizontal
 		col.operator("object.add_effector", text="Add Effector")
 		split = layout.split()
-		col = split.column(align=True)
-		col.operator("error.message", text="Update Effector")
 		col.operator("wm.mouse_position", text="Update Effector alt")
-
+		
+		split = layout.split()
+		col = split.column(align=True)
+		col = layout.column()
+		layout.label("Disable Recommended:")
+		col.prop(view, "show_relationship_lines")
+		
 
 ########################################################################################
 #	Above for the class functions

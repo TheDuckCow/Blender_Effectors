@@ -11,20 +11,31 @@ Usage
 - Use "Add Effector". This will seteup drivers and constraints for each of the objects and create an armature rig with circular bone shapes.
 - Go into pose mode for the added effector rig, and select the inner (solid) shape of the two concentric spheres
 - transform this however you want - rotation, scale, position, and you will notice the faces of the previous mesh now react accordingly
-- Select and move the outer (wireframe) shape of the two concentric spheres of the rig and move this around. This controls the falloff, and the farther away a face is from this sphere the lower the influence (scale it up or down to change the size of the field of influence
+- Select and move the outer (wireframe) shape of the two concentric spheres of the rig and move this around. This controls the falloff, and the farther away a face is from this sphere the lower the influence (scale it up or down to change the size of the field of influence).
 
-Not yet implemented
+To be implemented eventually
 =================
 
 Update Effector: 
 This function will allow you to update constraints or parameters such as falloff style and other coming parameters.
 
-Join Effector/Remove Effector:
-This function will allow you add or remove a specific object from the set of objects controlled by the effector rig
+Isolation Effectors:
+When adding an effector, should have the option to choose between effecting some/all of location, rotation, and scale, as well as which axis.
+
+Effector control panel:
+This panel will list the number of added effectors in the scene. With any of these effectors selected, further options for contorlling that effector and all its objects are possible, including:
+- Selecting all objects affected by that effector
+- Adding/removing objects affected by effector
+- Changing the influence factors (loc, rot, scale) for the effector.
+- Changing the falloff mode/parameters
+- Advanced (i.e. direct) control of the driver equation
 
 Current Version notes
 =================
 
-This addon is not at version "1.0" yet, basic functionality has not been completely achieved. For now, to get proper results, one needs to go into edit mode of the added rig and parent the inner sphere to the outter sphere to work as intended. No falloff options exist yet.
+The "Update Effector" does nothing at this current time. For current functionality demostration, see the following video:
+https://www.facebook.com/photo.php?v=736784593054780&l=5256051204140495370
+
+Currently, it *does* work to have multiple effectors on the same object without any issue. There is however an issue with location-changing effectors with feedback looping (driver moves object, but then driver is based on object position). Will be fixed in the future with empties and intermediate objects.
 
 Moo-Ack!

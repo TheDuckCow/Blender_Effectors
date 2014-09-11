@@ -30,12 +30,22 @@ This panel will list the number of added effectors in the scene. With any of the
 - Changing the falloff mode/parameters
 - Advanced (i.e. direct) control of the driver equation
 
+Additional effector types:
+- Transform Effector (Current implementation)
+- Texture Effector (Transform based on nearest pixel value of a UV mapped plane)
+- In-line Effector (Same as transform, but transforms made in a line to/from the control armature as opposed to from rest position)
+
+Additional desirable changes and additions:
+- Influence vetex group: So that transforms only affect a specific group of vertices (using hooks?)
+- Local/global options, for different effects (e.g. if you just wanted to scale on z-axis around control, but source objects are at different orientations)
+
+
 Current Version notes
 =================
 
 The "Update Effector" does nothing at this current time. For current functionality demostration, see the following video:
 https://www.facebook.com/photo.php?v=736784593054780&l=5256051204140495370
 
-Currently, it *does* work to have multiple effectors on the same object without any issue. There is however an issue with location-changing effectors with feedback looping (driver moves object, but then driver is based on object position). Will be fixed in the future with empties and intermediate objects.
+Currently, it *does* work to have multiple effectors on the same object without any issue. There is however an issue with location-changing effectors with feedback looping (driver moves object, but then driver is based on object position). Will be fixed in the future with empties as intermediate objects or equivalent setup.
 
 Moo-Ack!

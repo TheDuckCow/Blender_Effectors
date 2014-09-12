@@ -146,7 +146,7 @@ def createEffectorRig(bones,loc=None):
 	pbone.lock_rotation_w = False
 	pbone.lock_scale = (False, False, False)
 	pbone.rotation_mode = 'QUATERNION'
-	pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+	#pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True]
 
 	bpy.ops.object.mode_set(mode='EDIT')
 	for bone in arm.edit_bones:
@@ -170,27 +170,24 @@ def createEffectorRig(bones,loc=None):
 
 def createBoneShapes():
 	
-	bpy.ops.mesh.primitive_uv_sphere_add(segments=8, ring_count=8, enter_editmode=True)
-	bpy.ops.mesh.delete(type='ONLY_FACE')
-	bpy.ops.object.editmode_toggle()
-	effectorBone1 = bpy.context.active_object
-	effectorBone1.name = "effectorBone1"
+	if bpy.data.objects.get("effectorBone1") or bpy.data.objects.get("effectorBone2") is None:
+		bpy.ops.mesh.primitive_uv_sphere_add(segments=8, ring_count=8, enter_editmode=True)
+		bpy.ops.mesh.delete(type='ONLY_FACE')
+		bpy.ops.object.editmode_toggle()
+		effectorBone1 = bpy.context.active_object
+		effectorBone1.name = "effectorBone1"
+		bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, enter_editmode=False, size=0.5)
+		effectorBone2 = bpy.context.active_object
+		effectorBone2.name = "effectorBone2"
 	
-	bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, enter_editmode=False, size=0.5)
-	effectorBone2 = bpy.context.active_object
-	effectorBone2.name = "effectorBone2"
+		#move to last layer and hide
+		[False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True]
+		effectorBone1.hide = True
+		effectorBone2.hide = True
+		effectorBone1.hide_render = True
+		effectorBone2.hide_render = True
 	
-	#move to different layer, too
-	#[False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True]
-	
-	effectorBone1.hide = True
-	effectorBone2.hide = True
-	
-	effectorBone1.hide_render = True
-	effectorBone2.hide_render = True
-
-	
-	return [effectorBone1,effectorBone2]
+	return [bpy.data.objects["effectorBone1"],bpy.data.objects["effectorBone2"]]
 
 	
 def addEffectorObj(objList, rig):
@@ -200,11 +197,34 @@ def addEffectorObj(objList, rig):
 	#default expression, change later with different falloff etc
 	default_expression = "1/(.000001+objDist)*scale"
 	
+	#empty list versus obj list?
+	emptyList = []
+
 	# iterate over all objects passed in
 	for obj in objList:
+		if obj.type=="EMPTY": continue
+		##############################################
+		# Add the empty intermediate object/parent
+		bpy.ops.object.empty_add(type='PLAIN_AXES', view_align=False, location=obj.location)
+		empty = bpy.context.active_object
+		empty.name = "effr.empty"
+		obj.select = True
+		preParent = obj.parent
+		bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+		bpy.context.object.empty_draw_size = 0.1
+		if (preParent):
+			bpy.ops.object.select_all(action='DESELECT')
+			
+			# need to keep transform!
+			preParent.select = True
+			empty.select = True
+			bpy.context.scene.objects.active = preParent
+			bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+			#empty.parent = preParent
+			
 		bpy.context.scene.objects.active = obj
 		preConts = len(obj.constraints)	 # starting number of constraints
-		
+
 		###############################################
 		# LOCATION
 		bpy.ops.object.constraint_add(type='COPY_LOCATION')
@@ -223,7 +243,7 @@ def addEffectorObj(objList, rig):
 		varL_dist.name = "objDist"
 		varL_dist.targets[0].id = rig
 		varL_dist.targets[0].bone_target = 'base'
-		varL_dist.targets[1].id = obj
+		varL_dist.targets[1].id = empty
 		
 		varL_scale = driverLoc.variables.new()
 		varL_scale.type = 'TRANSFORMS'
@@ -341,6 +361,9 @@ class separateFaces(bpy.types.Operator):
 		
 		for obj in bpy.context.selected_objects:
 			bpy.context.scene.objects.active = obj
+			if obj.type != "MESH": continue
+			#set scale to 1
+			bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 			#mark all edges sharp
 			bpy.ops.object.editmode_toggle()
 			bpy.ops.mesh.select_all(action='SELECT')
@@ -414,7 +437,7 @@ class WIPpopup(bpy.types.Operator):
 		wm = context.window_manager
 		return wm.invoke_popup(self, width=350, height=40)
 		return self.execute(context)
- 	
+	
 	def draw(self, context):
 		self.layout.label("This addon is a work in progress, feature not yet implemented")
 		row = self.layout.split(0.80)

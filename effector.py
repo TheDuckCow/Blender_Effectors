@@ -124,7 +124,7 @@ def createEffectorRig(bones,loc=None):
 	
 	bone = arm.edit_bones.new('control')
 	bone.head[:] = 0.0000, 0.0000, 0.0000
-	bone.tail[:] = 0.0000, 0.0000, 1.0000
+	bone.tail[:] = 0.0000, 1.0000, 0.0000
 	bone.roll = 0.0000
 	bone.use_connect = False
 	bone.parent = arm.edit_bones[bones['base']]
@@ -170,7 +170,7 @@ def createEffectorRig(bones,loc=None):
 
 def createBoneShapes():
 	
-	if bpy.data.objects.get("effectorBone1") or bpy.data.objects.get("effectorBone2") is None:
+	if (bpy.data.objects.get("effectorBone1") is None) or (bpy.data.objects.get("effectorBone2") is None):
 		bpy.ops.mesh.primitive_uv_sphere_add(segments=8, ring_count=8, enter_editmode=True)
 		bpy.ops.mesh.delete(type='ONLY_FACE')
 		bpy.ops.object.editmode_toggle()

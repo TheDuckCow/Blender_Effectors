@@ -132,7 +132,7 @@ def createEffectorRig(bones,loc=None):
 
 	bpy.ops.object.mode_set(mode='OBJECT')
 	pbone = rig.pose.bones[bones['base']]
-	pbone.rigify_type = ''
+	#pbone.rigify_type = ''
 	pbone.lock_location = (False, False, False)
 	pbone.lock_rotation = (False, False, False)
 	pbone.lock_rotation_w = False
@@ -140,7 +140,7 @@ def createEffectorRig(bones,loc=None):
 	pbone.rotation_mode = 'QUATERNION'
 	pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
 	pbone = rig.pose.bones[bones['control']]
-	pbone.rigify_type = ''
+	#pbone.rigify_type = ''
 	pbone.lock_location = (False, False, False)
 	pbone.lock_rotation = (False, False, False)
 	pbone.lock_rotation_w = False

@@ -47,7 +47,7 @@ https://github.com/TheDuckCow/Blender_Effectors
 bl_info = {
 	"name": "Effector Motion",
 	"author": "Patrick W. Crawford",
-	"version": (1, 0, 2),
+	"version": (1, 0, 3),
 	"blender": (2, 71, 0),
 	"location": "3D window toolshelf",
 	"category": "Object",
@@ -350,6 +350,19 @@ class updateEffector(bpy.types.Operator):
 
 		return {'FINISHED'}
 
+class selectEmpties(bpy.types.Operator):
+	bl_idname = "object.select_empties"
+	bl_label = "Select Effector Empties"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		
+		print("Selecting effector empties: NOT COMPLETELY CORRECT YET!")
+		# just selects all empties, lol.
+		bpy.ops.object.select_by_type(type='EMPTY')
+
+		return {'FINISHED'}
+
 
 class separateFaces(bpy.types.Operator):
 	"""Separate all faces into new meshes"""
@@ -404,6 +417,7 @@ class effectorPanel(bpy.types.Panel):
 		col.operator("object.add_effector", text="Add Effector")
 		split = layout.split()
 		col.operator("wm.mouse_position", text="Update Effector alt")
+		col.operator("object.select_empties", text="Select Empties")
 		
 		split = layout.split()
 		col = split.column(align=True)
@@ -485,6 +499,7 @@ def register():
 	bpy.utils.register_class(updateEffector)
 	bpy.utils.register_class(effectorPanel)
 	bpy.utils.register_class(separateFaces)
+	bpy.utils.register_class(selectEmpties)
 	
 	bpy.utils.register_class(WIPpopup)
 	bpy.utils.register_class(notificationWIP)
@@ -497,6 +512,7 @@ def unregister():
 	bpy.utils.unregister_class(updateEffector)
 	bpy.utils.unregister_class(effectorPanel)
 	bpy.utils.unregister_class(separateFaces)
+	bpy.utils.unregister_class(selectEmpties)
 	
 	bpy.utils.unregister_class(WIPpopup)
 	bpy.utils.unregister_class(notificationWIP)

@@ -13,6 +13,11 @@ Usage
 - transform this however you want - rotation, scale, position, and you will notice the faces of the previous mesh now react accordingly
 - Select and move the outer (wireframe) shape of the two concentric spheres of the rig and move this around. This controls the falloff, and the farther away a face is from this sphere the lower the influence (scale it up or down to change the size of the field of influence).
 
+*Examples of possible results*
+https://www.facebook.com/photo.php?v=756842547715651
+https://www.facebook.com/video.php?v=736784593054780
+
+
 To be implemented eventually
 =================
 
@@ -44,8 +49,11 @@ Current Version notes
 =================
 
 The "Update Effector" does nothing at this current time. For current functionality demostration, see the following video:
-https://www.facebook.com/photo.php?v=736784593054780&l=5256051204140495370
+https://www.facebook.com/video.php?v=736784593054780
 
 Currently, it *does* work to have multiple effectors on the same object without any issue. There is however an issue with location-changing effectors with feedback looping (driver moves object, but then driver is based on object position). Will be fixed in the future with empties as intermediate objects or equivalent setup.
+
+Select empties is just a re-statement of the select all object by type function, later it will recognize empties related to the selected effector group.
+
 
 Moo-Ack!

@@ -65,6 +65,21 @@ from bpy.types import Operator
 from os.path import dirname, join
 
 
+""" needed? """
+"""
+class SceneButtonsPanel():
+	bl_space_type = 'PROPERTIES'
+	bl_region_type = 'WINDOW'
+	bl_context = "scene"
+
+	@classmethod
+	def poll(cls, context):
+		rd = context.scene.render
+		return context.scene and (rd.engine in cls.COMPAT_ENGINES)
+"""
+
+""" original """
+
 def createEffectorRig(bones,loc=None):
 	[bone_base,bone_control] = bones
 	if (loc==None):
@@ -100,7 +115,7 @@ def createEffectorRig(bones,loc=None):
 	
 	# property setup
 	#bpy.ops.wm.properties_edit(data_path='object', property='Effector Scale',
-	#	value='1.0', min=0, max=100, description='Falloff scale of effector')
+	#   value='1.0', min=0, max=100, description='Falloff scale of effector')
 	#scene property='Effector.001'
 	
 	
@@ -223,7 +238,7 @@ def addEffectorObj(objList, rig):
 			#empty.parent = preParent
 			
 		bpy.context.scene.objects.active = obj
-		preConts = len(obj.constraints)	 # starting number of constraints
+		preConts = len(obj.constraints)  # starting number of constraints
 
 		###############################################
 		# LOCATION
@@ -317,8 +332,8 @@ def addEffectorObj(objList, rig):
 		
 
 ########################################################################################
-#	Above for precursor functions
-#	Below for the class functions
+#   Above for precursor functions
+#   Below for the class functions
 ########################################################################################
 
 
@@ -397,13 +412,26 @@ class separateFaces(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+# SceneButtonsPanel
+# ^^ above for attempt to make in scenes panel
 class effectorPanel(bpy.types.Panel):
 	"""Effector Tools"""
+	
 	bl_label = "Effector Tools"
 	bl_space_type = 'VIEW_3D'
 	bl_region_type = 'TOOLS'
+	bl_category = "Tools"
+	"""
+	
+	bl_label = "Effector Tools"
+	bl_space_type = 'VIEW_3D'#"PROPERTIES" #or 'VIEW_3D' ?
+	bl_region_type = "WINDOW"
+	bl_context = "scene"
+	"""
 
 	def draw(self, context):
+		
+		
 		
 		view = context.space_data
 		scene = context.scene
@@ -412,7 +440,7 @@ class effectorPanel(bpy.types.Panel):
 		split = layout.split()
 		col = split.column(align=True)
 		col.operator("object.separate_faces", text="Separate Faces")
-		split = layout.split()			# uncomment to make vertical
+		split = layout.split()		# uncomment to make vertical
 		#col = split.column(align=True) # uncomment to make horizontal
 		col.operator("object.add_effector", text="Add Effector")
 		split = layout.split()
@@ -421,14 +449,61 @@ class effectorPanel(bpy.types.Panel):
 		
 		split = layout.split()
 		col = split.column(align=True)
-		col = layout.column()
+		#col = layout.column()
 		layout.label("Disable Recommended:")
 		col.prop(view, "show_relationship_lines")
 		
+		
+		# shameless copy from vertex group pa
+		
+		# funcitons to implement:
+		
+		# add new (change from current, where it creates just the armature
+		# and later need to assign objects to it
+		# need to figure out data structure for it! I think properties
+		# for each of the objects, either unique per group or over+1 unique per group
+		
+		# Assign
+		# Remove
+		
+		# Select
+		# Deselect
+		
+		# select Effector Control
+		
+		"""
+		ob = context.object
+		group = ob.vertex_groups.active
+
+		rows = 1
+		if group:
+			rows = 3
+
+		row = layout.row()
+		row.template_list("MESH_UL_vgroups", "", ob, "vertex_groups", ob.vertex_groups, "active_index", rows=rows)
+
+		col = row.column(align=True)
+		col.operator("object.vertex_group_add", icon='ZOOMIN', text="")
+		col.operator("object.vertex_group_remove", icon='ZOOMOUT', text="").all = False
+		
+		
+		if ob.vertex_groups and (ob.mode == 'OBJECT'):
+			row = layout.row()
+
+			sub = row.row(align=True)
+			sub.operator("object.vertex_group_assign", text="Assign")
+			sub.operator("object.vertex_group_remove_from", text="Remove")
+			
+			row = layout.row()
+			sub = row.row(align=True)
+			sub.operator("object.vertex_group_select", text="Select")
+			sub.operator("object.vertex_group_deselect", text="Deselect")
+		"""
+		
 
 ########################################################################################
-#	Above for the class functions
-#	Below for extra classes/registration stuff
+#   Above for the class functions
+#   Below for extra classes/registration stuff
 ########################################################################################
 
 

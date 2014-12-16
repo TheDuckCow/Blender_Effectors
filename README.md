@@ -6,13 +6,16 @@ Blender 3D addon for special motion effects for groups of objects, inspired by C
 Usage
 =================
 
-- Install the addon via user preferences from file (select effector.py), enable it, and locate the tool under the 3D view toolbar (currently on all tabs)
+- Install the addon via user preferences from file (select effector.py), enable it, and locate the tool under the 3D view toolbar (only visible under the TOOLS tab)
 - ENABLE AUTO-RUN, this script uses drivers which need auto-run enabled to function. preferences > file > check "Auto Run Python Scripts"
-- Take any single mesh, use the "Separate Faces" function (splits every face into a new object and re-locates the origin)
-- Use "Add Effector". This will seteup drivers and constraints for each of the objects and create an armature rig with circular bone shapes.
+- Take any single mesh, use the "Separate Faces" function (splits every face into a new object and re-locates the origin); alternatively just select a collection of meshes, they need not be only faces.
+- Press "Add Effector" with the above ojbects selected. This will seteup drivers and constraints for each of the objects and create an armature rig with circular bone shapes.
 - Go into pose mode for the added effector rig, and select the inner (solid) shape of the two concentric spheres
 - transform this however you want - rotation, scale, position, and you will notice the faces of the previous mesh now react accordingly
 - Select and move the outer (wireframe) shape of the two concentric spheres of the rig and move this around. This controls the falloff, and the farther away a face is from this sphere the lower the influence (scale it up or down to change the size of the field of influence).
+
+*Demo video*
+https://www.youtube.com/watch?v=Wtb5R6wck2g&feature=youtu.be
 
 *Examples of possible results*
 https://www.facebook.com/photo.php?v=756842547715651

@@ -7,6 +7,7 @@ Usage
 =================
 
 - Install the addon via user preferences from file (select effector.py), enable it, and locate the tool under the 3D view toolbar (currently on all tabs)
+- ENABLE AUTO-RUN, this script uses drivers which need auto-run enabled to function. preferences > file > check "Auto Run Python Scripts"
 - Take any single mesh, use the "Separate Faces" function (splits every face into a new object and re-locates the origin)
 - Use "Add Effector". This will seteup drivers and constraints for each of the objects and create an armature rig with circular bone shapes.
 - Go into pose mode for the added effector rig, and select the inner (solid) shape of the two concentric spheres

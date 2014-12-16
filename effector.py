@@ -45,7 +45,7 @@ https://github.com/TheDuckCow/Blender_Effectors
 
 
 bl_info = {
-	"name": "Effector Motion",
+	"name": "Blender Effectors",
 	"author": "Patrick W. Crawford",
 	"version": (1, 0, 3),
 	"blender": (2, 71, 0),

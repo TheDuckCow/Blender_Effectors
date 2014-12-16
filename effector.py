@@ -214,7 +214,10 @@ def addEffectorObj(objList, rig):
 	
 	#empty list versus obj list?
 	emptyList = []
-
+	
+	# explicit state set
+	bpy.ops.object.mode_set(mode='OBJECT')
+	
 	# iterate over all objects passed in
 	for obj in objList:
 		if obj.type=="EMPTY": continue

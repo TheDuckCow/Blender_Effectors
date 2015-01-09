@@ -14,7 +14,8 @@ Usage
 - transform this however you want - rotation, scale, position, and you will notice the faces of the previous mesh now react accordingly
 - Select and move the outer (wireframe) shape of the two concentric spheres of the rig and move this around. This controls the falloff, and the farther away a face is from this sphere the lower the influence (scale it up or down to change the size of the field of influence).
 
-**Demo video**
+[!**Demo video**](https://www.youtube.com/watch?v=Wtb5R6wck2g)
+
 [![Alt text for your video](http://img.youtube.com/vi/Wtb5R6wck2g/0.jpg)](https://www.youtube.com/watch?v=Wtb5R6wck2g)
 
 **Examples of possible results**

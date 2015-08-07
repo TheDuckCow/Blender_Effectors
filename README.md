@@ -10,6 +10,7 @@ Blender 3D addon for special motion effects for groups of objects, inspired by C
 
 Usage
 =================
+**NOTE: This addon uses drivers to function. Make sure python scripts are set to auto-run** *(user preferences > file > Auto execution)*
 
 - Install the addon via user preferences from file (select effector.py), enable it, and locate the tool under the 3D view toolbar (only visible under the TOOLS tab)
 - ENABLE AUTO-RUN, this script uses drivers which need auto-run enabled to function. preferences > file > check "Auto Run Python Scripts"

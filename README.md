@@ -8,6 +8,21 @@ Blender 3D addon for special motion effects for groups of objects, inspired by C
 [![Alt text for your video](http://img.youtube.com/vi/Wtb5R6wck2g/0.jpg)](https://www.youtube.com/watch?v=Wtb5R6wck2g)
 
 
+Note on Blender 2.8 support
+=================
+
+This addon has been updated for blender 2.8 (tested on 2.80 and 2.82), but is **not optimized**: Adding the effector to even relatively low poly objects will take a very long time. Users are strongly advised to save work before using, or be prepared to look at your screen without visual updates for a long time while the addon implements the drivers and control objects.
+[Demo in blender 2.8](https://twitter.com/TheDuckCow/status/1222010768704655362)
+
+For a more robust and generalized alternative, consider looking at Animation Nodes or similar such projects.
+
+
+Blender 2.7 support
+=================
+
+This latest version still runs on Blender 2.7x as well, possibly as early as 2.71 (though most recently tested in 2.79).
+
+
 Usage
 =================
 **NOTE: This addon uses drivers to function. Make sure python scripts are set to auto-run** *(user preferences > file > Auto execution)*
@@ -15,7 +30,7 @@ Usage
 - Install the addon via user preferences from file (select effector.py), enable it, and locate the tool under the 3D view toolbar (only visible under the TOOLS tab)
 - ENABLE AUTO-RUN, this script uses drivers which need auto-run enabled to function. preferences > file > check "Auto Run Python Scripts"
 - Take any single mesh, use the "Separate Faces" function (splits every face into a new object and re-locates the origin); alternatively just select a collection of meshes, they need not be only faces. Consider applying scale and rotation via control-a at this point if you want the current setup to be the "rest" position when the effector is added.
-- Press "Add Effector" with the above ojbects selected. This will seteup drivers and constraints for each of the objects and create an armature rig with circular bone shapes.
+- Press "Add Effector" with the above objects selected. This will setup drivers and constraints for each of the objects and create an armature rig with circular bone shapes.
 - Go into pose mode for the added effector rig, and select the inner (solid) shape of the two concentric spheres
 - transform this however you want - rotation, scale, position, and you will notice the faces of the previous mesh now react accordingly
 - Select and move the outer (wireframe) shape of the two concentric spheres of the rig and move this around. This controls the falloff, and the farther away a face is from this sphere the lower the influence (scale it up or down to change the size of the field of influence).
@@ -28,14 +43,14 @@ https://www.facebook.com/video.php?v=736784593054780
 To be implemented eventually
 =================
 
-Update Effector: 
+Update Effector:
 This function will allow you to update constraints or parameters such as falloff style and other coming parameters.
 
 Isolation Effectors:
 When adding an effector, should have the option to choose between effecting some/all of location, rotation, and scale, as well as which axis.
 
 Effector control panel:
-This panel will list the number of added effectors in the scene. With any of these effectors selected, further options for contorlling that effector and all its objects are possible, including:
+This panel will list the number of added effectors in the scene. With any of these effectors selected, further options for controlling that effector and all its objects are possible, including:
 - Selecting all objects affected by that effector
 - Adding/removing objects affected by effector
 - Changing the influence factors (loc, rot, scale) for the effector.
@@ -55,7 +70,7 @@ Additional desirable changes and additions:
 Current Version notes
 =================
 
-The "Update Effector" does nothing at this current time. For current functionality demostration, see the following video:
+The "Update Effector" does nothing at this current time. For current functionality demonstration, see the following video:
 https://www.facebook.com/video.php?v=736784593054780
 
 Currently, it *does* work to have multiple effectors on the same object without any issue. There is however an issue with location-changing effectors with feedback looping (driver moves object, but then driver is based on object position). Will be fixed in the future with empties as intermediate objects or equivalent setup.

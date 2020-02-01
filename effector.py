@@ -45,7 +45,7 @@ https://github.com/TheDuckCow/Blender_Effectors
 bl_info = {
 	"name": "Blender Effectors",
 	"author": "Patrick W. Crawford",
-	"version": (1, 0, 5),
+	"version": (1, 1, 0),
 	"blender": (2, 80, 0),
 	"location": "3D window toolshelf",
 	"category": "Object",
@@ -424,6 +424,21 @@ class BE_OT_separate_faces(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+class BE_OT_clear_effector(bpy.types.Operator):
+	"""Separate all faces into new meshes"""
+	bl_idname = "object.clear_effector"
+	bl_label = "Remove all effectors from selected to objects"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		for ob in context.selected_objects:
+			for cons in ob.constraints:
+				if cons.type not in ("COPY_LOCATION", "COPY_ROTATION", "COPY_SCALE"):
+					continue
+				ob.constraints.remove(cons)
+		return {'FINISHED'}
+
+
 class BE_PT_effectors(bpy.types.Panel):
 	"""Effector Tools"""
 
@@ -441,6 +456,7 @@ class BE_PT_effectors(bpy.types.Panel):
 		col = split.column(align=True)
 		col.operator("object.separate_faces", text="Separate Faces")
 		col.operator("object.add_effector", text="Add Effector")
+		col.operator("object.clear_effector", text="Clear Effectors")
 		# col.operator("wm.mouse_position", text="Update Effector alt")
 		col.operator("object.select_empties", text="Select Empties")
 
@@ -557,7 +573,8 @@ classes = (
 	BE_OT_update_effector,
 	BE_PT_effectors,
 	BE_OT_separate_faces,
-	BE_OT_select_empties
+	BE_OT_select_empties,
+	BE_OT_clear_effector
 )
 
 

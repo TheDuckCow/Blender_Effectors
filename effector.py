@@ -45,7 +45,7 @@ https://github.com/TheDuckCow/Blender_Effectors
 bl_info = {
 	"name": "Blender Effectors",
 	"author": "Patrick W. Crawford",
-	"version": (1, 0, 4),
+	"version": (1, 0, 5),
 	"blender": (2, 80, 0),
 	"location": "3D window toolshelf",
 	"category": "Object",
@@ -56,11 +56,11 @@ bl_info = {
 
 import bpy
 
-## just in case
 from bpy.props import *
 from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator
 from os.path import dirname, join
+import time
 
 
 BV_IS_28 = None  # global initialization
@@ -171,6 +171,7 @@ def createEffectorRig(bones, loc=None):
 
 	return rig
 
+
 def createBoneShapes():
 	"""Sets bone shape for control armature"""
 	if (bpy.data.objects.get("effectorBone1") is None) or (bpy.data.objects.get("effectorBone2") is None):
@@ -214,53 +215,45 @@ def addEffectorObj(objList, rig):
 	# explicit state set
 	bpy.ops.object.mode_set(mode='OBJECT')
 
+	# debug timing
+	debug_timing = []
+
 	# iterate over all objects passed in
 	for obj in objList:
+
 		if obj.type=="EMPTY":
 			continue
-		##############################################
+
 		# Add the empty intermediate object/parent
-		if bv28():
-			bpy.ops.object.empty_add(
-				type='PLAIN_AXES', align='WORLD', location=obj.location)
-		else:
-			bpy.ops.object.empty_add(
-				type='PLAIN_AXES', view_align=False, location=obj.location)
-		empty = bpy.context.active_object
-		empty.name = "effr.empty"
-		select_set(obj, True)
+		# tm0 = time.time()
+		empty = create_empty("effr.empty", obj.location)
 		preParent = obj.parent
-		bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+		obj.parent = empty
+		obj.location = (0,0,0) # better would be to properly do "keep_transform"
 		if bv28():
-			bpy.context.object.empty_display_size = 0.1
+			empty.empty_display_size = 0.1
 		else:
-			bpy.context.object.empty_draw_size = 0.1
+			empty.empty_draw_size = 0.1
+
+		# tm2 = time.time()
 		if (preParent):
-			bpy.ops.object.select_all(action='DESELECT')
+			empty.parent = preParent # confirm if valid, i.e. no other transposent = preParent
 
-			# need to keep transform!
-			select_set(preParent, True)
-			select_set(empty, True)
-			set_active_object(bpy.context, preParent)
-			bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
-			#empty.parent = preParent
-
-		set_active_object(bpy.context, obj)
-		preConts = len(obj.constraints)  # starting number of constraints
-
-		###############################################
 		# LOCATION
-		bpy.ops.object.constraint_add(type='COPY_LOCATION')
-		obj.constraints[preConts].use_offset = True
-		obj.constraints[preConts].target_space = 'LOCAL'
-		obj.constraints[preConts].owner_space = 'LOCAL'
-		obj.constraints[preConts].target = rig
-		obj.constraints[preConts].subtarget = "control"
+		# tm3 = time.time()
+		constraint = obj.constraints.new(type='COPY_LOCATION')
+		constraint.use_offset = True
+		constraint.target_space = 'LOCAL'
+		constraint.owner_space = 'LOCAL'
+		constraint.target = rig
+		constraint.subtarget = "control"
 
-		driverLoc = obj.constraints[preConts].driver_add("influence").driver
+		driverLoc = constraint.driver_add("influence").driver
 		driverLoc.type = 'SCRIPTED'
 
+
 		# var for objDist two targets, 1st is "base" second is "distanceRef"
+		# tm4 = time.time()
 		varL_dist = driverLoc.variables.new()
 		varL_dist.type = 'LOC_DIFF'
 		varL_dist.name = "objDist"
@@ -277,16 +270,15 @@ def addEffectorObj(objList, rig):
 
 		driverLoc.expression = default_expression
 
-		###############################################
 		# ROTATION
-		bpy.ops.object.constraint_add(type='COPY_ROTATION')
-		preConts+=1
-		obj.constraints[preConts].target_space = 'LOCAL'
-		obj.constraints[preConts].owner_space = 'LOCAL'
-		obj.constraints[preConts].target = rig
-		obj.constraints[preConts].subtarget = "control"
+		# tm5 = time.time()
+		constraint = obj.constraints.new(type='COPY_ROTATION')
+		constraint.target_space = 'LOCAL'
+		constraint.owner_space = 'LOCAL'
+		constraint.target = rig
+		constraint.subtarget = "control"
 
-		driverRot = obj.constraints[preConts].driver_add("influence").driver
+		driverRot = constraint.driver_add("influence").driver
 		driverRot.type = 'SCRIPTED'
 
 		# var for objDist two targets, 1st is "base" second is "distanceRef"
@@ -306,16 +298,15 @@ def addEffectorObj(objList, rig):
 
 		driverRot.expression = default_expression
 
-		###############################################
 		# SCALE
-		bpy.ops.object.constraint_add(type='COPY_SCALE')
-		preConts+=1
-		obj.constraints[preConts].target_space = 'LOCAL'
-		obj.constraints[preConts].owner_space = 'LOCAL'
-		obj.constraints[preConts].target = rig
-		obj.constraints[preConts].subtarget = "control"
+		# tm6 = time.time()
+		constraint = obj.constraints.new(type='COPY_SCALE')
+		constraint.target_space = 'LOCAL'
+		constraint.owner_space = 'LOCAL'
+		constraint.target = rig
+		constraint.subtarget = "control"
 
-		driverScale = obj.constraints[preConts].driver_add("influence").driver
+		driverScale = constraint.driver_add("influence").driver
 		driverScale.type = 'SCRIPTED'
 
 		# var for objDist two targets, 1st is "base" second is "distanceRef"
@@ -334,6 +325,21 @@ def addEffectorObj(objList, rig):
 		varS_scale.targets[0].bone_target = 'base'
 
 		driverScale.expression = default_expression
+
+		# tm7 = time.time()
+		# debug_timing.append(
+		# 	[tm1-tm0, tm2-tm1, tm3-tm2, tm4-tm3, tm5-tm4, tm6-tm5, tm7-tm6])
+
+	# # Performance debugging
+	# debug_overall = [0]*len(debug_timing[0])
+	# for row in debug_timing:
+	# 	for i,itm in enumerate(row):
+	# 		debug_overall[i] += itm
+	# print("Overall timing:" + str(sum(debug_overall)))
+	# print(debug_overall)
+	# print("% timing:")
+	# percentages = [round(itm/sum(debug_overall)*100) for itm in debug_overall]
+	# print(percentages)
 
 
 ########################################################################################
@@ -438,9 +444,14 @@ class BE_PT_effectors(bpy.types.Panel):
 		# col.operator("wm.mouse_position", text="Update Effector alt")
 		col.operator("object.select_empties", text="Select Empties")
 
-		if not bv28() and view.show_relationship_lines:
-			layout.label(text="")
-			layout.label(text="Disable Recommended:")
+		split = layout.split()
+		col = split.column(align=True)
+		col.label(text="Disable Recommended:")
+		if bv28():
+			#print(dir(context.scene))
+			#context.scene.overlay.show_relationship_lines
+			col.prop(context.space_data.overlay, "show_relationship_lines")
+		else:
 			col.prop(view, "show_relationship_lines")
 
 
@@ -522,6 +533,24 @@ def obj_unlink_remove(obj, remove, context=None):
 		obj.user_clear()
 		bpy.data.objects.remove(obj)
 
+
+def create_empty(name, location=None, context=None):
+	"""Creates an empty object without operator usage overhead"""
+	new_ob = bpy.data.objects.new(name, None)
+	obj_link_scene(new_ob, context if context else bpy.context)
+	if location:
+		new_ob.location = location
+	return new_ob
+
+
+def obj_link_scene(obj, context=None):
+	"""Links object to scene, or for 2.8, the scene master collection"""
+	if not context:
+		context = bpy.context
+	if hasattr(context.scene.objects, "link"):
+		context.scene.objects.link(obj)
+	elif hasattr(context.scene, "collection"):
+		context.scene.collection.objects.link(obj)
 
 classes = (
 	BE_OT_add_effector,
